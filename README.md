@@ -11,11 +11,11 @@ Construida para la hackathon **Pizza Protocol**. Consume una API cerrada provist
 
 ## Integrantes
 
-| Nombre | Código | Rol principal |
-|:-------|:-------|:--------------|
-| _____  | _____  | Fundación · Auth · Dashboard · Deploy (CP1) |
-| _____  | _____  | Atlas de Tropeles · Feed infinito · Atender señal (CP2–CP4) |
-| _____  | _____  | Sector Story Engine (CP5) |
+| Nombre | Código |
+|:-------|:-------|
+| Ferrel Valentino Infante Garcia  | 202510148  |
+| Sebastian Gonzalo Cassas Matos  | 202510209  |
+| Gabriel  | 202510 |
 
 ## Deploy
 
