@@ -8,6 +8,20 @@
   transition: background 0.6s ease, color 0.6s ease;
 }
 
+/* Capa ambiental por CLIMA (dato del endpoint). Estática, sin animación:
+   tiñe la base del panel para que cada sector se sienta distinto, sin pisar
+   el colorToken por etapa. No afecta a prefers-reduced-motion. */
+.story-climate {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  background:
+    radial-gradient(120% 80% at 18% 12%, var(--climate-a, transparent) 0%, transparent 60%),
+    radial-gradient(120% 80% at 82% 88%, var(--climate-b, transparent) 0%, transparent 60%);
+}
+
 /* Capa de patrón (assetKey -> pattern-*). Pinta con el color de acento. */
 .story-pattern {
   position: absolute;

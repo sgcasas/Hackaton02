@@ -7,7 +7,7 @@ import { Spinner, ErrorState } from '../../components/ui';
 import { Badge } from '../../components/ui';
 import { useActiveStage } from './useActiveStage';
 import { usePrefersReducedMotion } from './usePrefersReducedMotion';
-import { climateLabel, patternClass, stageStyle } from './storyTheme';
+import { climateLabel, climateStyle, patternClass, stageStyle } from './storyTheme';
 import './story.css';
 
 // Soporte de scroll-driven animations (una sola lectura).
@@ -113,6 +113,7 @@ export default function SectorStoryPage(): JSX.Element {
   const activeStyle = stageStyle(activeStage.colorToken);
   const visualStyle: CSSProperties = {
     ...activeStyle,
+    ...climateStyle(story.sector.climate),
     viewTransitionName: `sector-${story.sector.id}`,
   } as CSSProperties;
   const barStyle: CSSProperties = SUPPORTS_SDA
@@ -142,6 +143,7 @@ export default function SectorStoryPage(): JSX.Element {
         {/* ---- Panel visual sticky (no se desmonta; cambia por etapa) ---- */}
         <aside className="sticky top-0 z-10 h-[45vh] lg:h-screen">
           <div className="story-visual relative flex h-full flex-col justify-between overflow-hidden p-6 lg:p-8" style={visualStyle}>
+            <div className="story-climate" aria-hidden="true" />
             <div className={`story-pattern ${patternClass(activeStage.assetKey)}`} aria-hidden="true" />
             <div className="story-scanlines" aria-hidden="true" />
             <div className="story-vignette" aria-hidden="true" />

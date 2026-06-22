@@ -68,6 +68,29 @@ export function patternClass(assetKey: string): string {
   return PATTERNS[hash(assetKey) % PATTERNS.length];
 }
 
+// Tema ambiental por CLIMA (dato real del endpoint). Da a cada sector una base
+// distinta SIN pisar el colorToken por etapa: se aplica como capa estática
+// (sin animación → no afecta a prefers-reduced-motion). El colorToken sigue
+// mandando en acento y métricas de la etapa activa.
+interface ClimateVars {
+  a: string;
+  b: string;
+}
+const CLIMATE_AMBIENT: Record<Climate, ClimateVars> = {
+  PIXEL_FOREST: { a: '#34d399', b: '#065f46' },
+  NEON_CAVE: { a: '#a855f7', b: '#ec4899' },
+  CLOUD_AQUARIUM: { a: '#38bdf8', b: '#22d3ee' },
+  RETRO_ARCADE: { a: '#fbbf24', b: '#f43f5e' },
+};
+
+export function climateStyle(climate: Climate): CSSProperties {
+  const c = CLIMATE_AMBIENT[climate];
+  return {
+    '--climate-a': c.a,
+    '--climate-b': c.b,
+  } as CSSProperties;
+}
+
 // Etiqueta legible del clima para la cabecera del panel.
 const CLIMATE_LABEL: Record<Climate, string> = {
   PIXEL_FOREST: 'Bosque Pixel',
