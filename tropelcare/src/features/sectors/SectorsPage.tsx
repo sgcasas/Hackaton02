@@ -21,7 +21,7 @@ function colorTokenForSector(s: SectorListItem): string {
   return tokens[h % tokens.length];
 }
 
-export default function SectorsPage(): JSX.Element {
+export default function SectorsPage() {
   const navigate = useNavigate();
   const [data, setData] = useState<SectorsResponse | null>(null);
   const [error, setError] = useState(false);

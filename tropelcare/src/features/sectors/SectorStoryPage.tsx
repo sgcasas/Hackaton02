@@ -18,7 +18,7 @@ function metricLabel(key: string): string {
   return key.charAt(0).toUpperCase() + key.slice(1);
 }
 
-export default function SectorStoryPage(): JSX.Element {
+export default function SectorStoryPage() {
   const { id = '' } = useParams<{ id: string }>();
   const reduced = usePrefersReducedMotion();
 
