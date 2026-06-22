@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom';
 import { api } from '../../lib/api';
 import type { SectorListItem, SectorsResponse } from '../../types/api';
 import { Spinner, ErrorState, EmptyState } from '../../components/ui';
-import { climateLabel, stageStyle } from './storyTheme';
+import { climateLabel, patternClass, stageStyle } from './storyTheme';
 import { prefersReducedMotion } from './usePrefersReducedMotion';
 import './story.css';
 
@@ -76,9 +76,11 @@ export default function SectorsPage(): JSX.Element {
               <button
                 type="button"
                 onClick={() => goToStory(s.id)}
-                className="group w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-left transition hover:border-slate-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
+                className="group w-full overflow-hidden rounded-xl border border-slate-700 bg-slate-900 text-left transition duration-200 hover:-translate-y-0.5 hover:border-slate-500 hover:shadow-lg hover:shadow-black/40 focus-visible:outline focus-visible:outline-2 focus-visible:outline-emerald-400"
               >
-                <div className="story-visual relative h-24" style={swatch}>
+                <div className="story-visual relative h-24 overflow-hidden" style={swatch}>
+                  <div className={`story-pattern ${patternClass(s.sectorCode)}`} aria-hidden="true" />
+                  <div className="story-vignette" aria-hidden="true" />
                   <span className="absolute bottom-2 left-3 text-xs font-medium uppercase tracking-wide opacity-90">
                     {climateLabel(s.climate)}
                   </span>

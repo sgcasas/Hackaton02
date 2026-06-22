@@ -88,6 +88,84 @@
   to { opacity: 1; transform: translateY(0); }
 }
 
+/* Scanlines y viñeta: dan textura de "pantalla de sala de control" sin imágenes. */
+.story-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image: repeating-linear-gradient(
+    to bottom, rgba(0, 0, 0, 0.5) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+.story-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 35%, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+/* Título con leve glow del color de acento. */
+.story-title {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--story-accent, #6ee7b7) 55%, transparent);
+}
+
+/* Pastilla del evento dominante. */
+.story-event {
+  background: color-mix(in srgb, var(--story-accent, #6ee7b7) 22%, transparent);
+  color: var(--story-fg, #f8fafc);
+  border: 1px solid color-mix(in srgb, var(--story-accent, #6ee7b7) 60%, transparent);
+}
+
+/* Barra de métrica normalizada. */
+.story-meter {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.story-meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--story-accent, #6ee7b7);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--story-accent, #6ee7b7) 70%, transparent);
+  transition: width 0.45s ease, background 0.6s ease;
+}
+
+/* Rail de etapas (scrubber vertical dentro del panel). */
+.story-rail {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.story-rail__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--story-fg, #fff) 55%, transparent);
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.story-rail__dot:hover {
+  background: color-mix(in srgb, var(--story-fg, #fff) 40%, transparent);
+}
+.story-rail__dot.is-active {
+  background: var(--story-accent, #6ee7b7);
+  border-color: var(--story-accent, #6ee7b7);
+  transform: scale(1.5);
+  box-shadow: 0 0 10px var(--story-accent, #6ee7b7);
+}
+.story-rail__dot:focus-visible {
+  outline: 2px solid var(--story-accent, #6ee7b7);
+  outline-offset: 2px;
+}
+
 /* Foco visible del contenedor navegable por teclado */
 .story-root:focus-visible {
   outline: 3px solid var(--story-accent, #6ee7b7);

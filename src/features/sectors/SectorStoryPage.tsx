@@ -46,6 +46,18 @@ export default function SectorStoryPage(): JSX.Element {
   const count = stages.length;
   const { active, setStageRef, goTo } = useActiveStage(count);
 
+  // Máximo de cada métrica a lo largo de la historia: normaliza las barras del
+  // panel sin asumir una escala fija (stability/energy 0-100, alerts pequeñas…).
+  const maxByMetric = useMemo(() => {
+    const m: Record<string, number> = {};
+    for (const st of stages) {
+      for (const [k, v] of Object.entries(st.metrics)) {
+        m[k] = Math.max(m[k] ?? 0, v);
+      }
+    }
+    return m;
+  }, [stages]);
+
   // Progreso fallback (cuando NO hay scroll-driven): escucha el scroll real.
   const [progress, setProgress] = useState(0);
   useEffect(() => {
@@ -129,25 +141,52 @@ export default function SectorStoryPage(): JSX.Element {
       <div className="lg:grid lg:grid-cols-2">
         {/* ---- Panel visual sticky (no se desmonta; cambia por etapa) ---- */}
         <aside className="sticky top-0 z-10 h-[45vh] lg:h-screen">
-          <div className="story-visual relative flex h-full flex-col justify-between overflow-hidden p-6" style={visualStyle}>
+          <div className="story-visual relative flex h-full flex-col justify-between overflow-hidden p-6 lg:p-8" style={visualStyle}>
             <div className={`story-pattern ${patternClass(activeStage.assetKey)}`} aria-hidden="true" />
+            <div className="story-scanlines" aria-hidden="true" />
+            <div className="story-vignette" aria-hidden="true" />
+
             <div className="relative">
               <p className="text-xs font-medium uppercase tracking-widest opacity-80">
                 {climateLabel(story.sector.climate)} · Etapa {active + 1}/{count}
               </p>
-              <h1 className="mt-1 text-2xl font-bold lg:text-3xl">{story.sector.name}</h1>
-              <p className="mt-2 max-w-md text-sm opacity-90 lg:text-base">{activeStage.title}</p>
+              <h1 className="story-title mt-1 text-2xl font-bold lg:text-4xl">{story.sector.name}</h1>
+              <p className="mt-2 max-w-md text-sm opacity-90 lg:text-lg">{activeStage.title}</p>
+              <span className="story-event mt-3 inline-block rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide">
+                {activeStage.dominantEvent}
+              </span>
             </div>
 
-            {/* Métricas de la etapa ACTIVA (el TA verifica esta correspondencia). */}
+            {/* Métricas de la etapa ACTIVA, con barra normalizada (el TA verifica
+                que correspondan a la etapa activa). */}
             <dl className="relative grid grid-cols-3 gap-3">
-              {Object.entries(activeStage.metrics).map(([k, v]) => (
-                <div key={k} className="rounded-lg bg-black/25 p-3 backdrop-blur-sm">
-                  <dt className="text-[11px] uppercase tracking-wide opacity-75">{metricLabel(k)}</dt>
-                  <dd className="text-xl font-semibold tabular-nums">{v}</dd>
-                </div>
-              ))}
+              {Object.entries(activeStage.metrics).map(([k, v]) => {
+                const pct = Math.round((v / (maxByMetric[k] || 1)) * 100);
+                return (
+                  <div key={k} className="rounded-lg bg-black/30 p-3 backdrop-blur-sm">
+                    <dt className="text-[11px] uppercase tracking-wide opacity-75">{metricLabel(k)}</dt>
+                    <dd className="text-2xl font-semibold tabular-nums">{v}</dd>
+                    <div className="story-meter mt-2" aria-hidden="true">
+                      <span className="story-meter__fill" style={{ width: `${pct}%` } as CSSProperties} />
+                    </div>
+                  </div>
+                );
+              })}
             </dl>
+
+            {/* Rail de etapas (scrubber): mouse + indicador visual del avance. */}
+            <nav className="story-rail" aria-label="Etapas">
+              {stages.map((s, i) => (
+                <button
+                  key={s.id}
+                  type="button"
+                  onClick={() => goTo(i, reduced)}
+                  aria-label={`Ir a etapa ${i + 1}: ${s.title}`}
+                  aria-current={i === active ? 'step' : undefined}
+                  className={`story-rail__dot ${i === active ? 'is-active' : ''}`}
+                />
+              ))}
+            </nav>
           </div>
         </aside>
 
