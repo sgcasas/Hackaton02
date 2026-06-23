@@ -1,0 +1,216 @@
+/* CP5 — Scrollytelling. Visual 100% CSS (sin imágenes/video/canvas).
+   Temas y patrones se alimentan de variables que la página fija por etapa. */
+
+/* ---- Panel visual sticky: color desde colorToken (--story-*). ---- */
+.story-visual {
+  background: linear-gradient(160deg, var(--story-from, #0f172a), var(--story-to, #334155));
+  color: var(--story-fg, #f8fafc);
+  transition: background 0.6s ease, color 0.6s ease;
+}
+
+/* Capa ambiental por CLIMA (dato del endpoint). Estática, sin animación:
+   tiñe la base del panel para que cada sector se sienta distinto, sin pisar
+   el colorToken por etapa. No afecta a prefers-reduced-motion. */
+.story-climate {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  background:
+    radial-gradient(120% 80% at 18% 12%, var(--climate-a, transparent) 0%, transparent 60%),
+    radial-gradient(120% 80% at 82% 88%, var(--climate-b, transparent) 0%, transparent 60%);
+}
+
+/* Capa de patrón (assetKey -> pattern-*). Pinta con el color de acento. */
+.story-pattern {
+  position: absolute;
+  inset: 0;
+  color: var(--story-accent, #94a3b8);
+  pointer-events: none;
+  opacity: 0.3;
+  transition: opacity 0.4s ease;
+}
+.pattern-grid {
+  background-image:
+    linear-gradient(currentColor 1px, transparent 1px),
+    linear-gradient(90deg, currentColor 1px, transparent 1px);
+  background-size: 34px 34px;
+}
+.pattern-dots {
+  background-image: radial-gradient(currentColor 2px, transparent 2px);
+  background-size: 26px 26px;
+}
+.pattern-rings {
+  background-image: repeating-radial-gradient(
+    circle at 50% 42%, transparent 0 18px, currentColor 18px 20px);
+}
+.pattern-diagonal {
+  background-image: repeating-linear-gradient(
+    45deg, currentColor 0 2px, transparent 2px 18px);
+}
+.pattern-waves {
+  background-image: repeating-radial-gradient(
+    circle at 0 50%, currentColor 0 1px, transparent 1px 15px);
+}
+.pattern-hex {
+  background-image:
+    radial-gradient(circle at 50% 0, currentColor 0 2px, transparent 3px),
+    radial-gradient(circle at 0 50%, currentColor 0 2px, transparent 3px);
+  background-size: 30px 30px;
+}
+
+/* ---- Barra de progreso del recorrido ---- */
+.story-progress {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: rgba(148, 163, 184, 0.2);
+  z-index: 40;
+}
+.story-progress__bar {
+  height: 100%;
+  transform-origin: left center;
+  transform: scaleX(var(--p, 0)); /* fallback JS: la página fija --p */
+  background: var(--story-accent, #6ee7b7);
+  transition: transform 0.25s ease, background 0.6s ease;
+}
+
+/* Scroll-driven animations: si hay soporte, el navegador mueve la barra
+   siguiendo el scroll del root (preferido). Si no, queda el fallback de arriba. */
+@supports (animation-timeline: scroll()) {
+  .story-progress--sda .story-progress__bar {
+    transform: scaleX(0);
+    animation: story-grow linear both;
+    animation-timeline: scroll(root block);
+  }
+  /* entrada suave de cada bloque ligada a su posición en el viewport */
+  .story-stage--sda {
+    animation: story-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 35%;
+  }
+}
+@keyframes story-grow {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+@keyframes story-reveal {
+  from { opacity: 0.35; transform: translateY(24px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Scanlines y viñeta: dan textura de "pantalla de sala de control" sin imágenes. */
+.story-scanlines {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.22;
+  background-image: repeating-linear-gradient(
+    to bottom, rgba(0, 0, 0, 0.5) 0 1px, transparent 1px 3px);
+  mix-blend-mode: overlay;
+}
+.story-vignette {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: radial-gradient(120% 90% at 50% 35%, transparent 55%, rgba(0, 0, 0, 0.45) 100%);
+}
+
+/* Título con leve glow del color de acento. */
+.story-title {
+  text-shadow: 0 0 18px color-mix(in srgb, var(--story-accent, #6ee7b7) 55%, transparent);
+}
+
+/* Pastilla del evento dominante. */
+.story-event {
+  background: color-mix(in srgb, var(--story-accent, #6ee7b7) 22%, transparent);
+  color: var(--story-fg, #f8fafc);
+  border: 1px solid color-mix(in srgb, var(--story-accent, #6ee7b7) 60%, transparent);
+}
+
+/* Barra de métrica normalizada. */
+.story-meter {
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.35);
+  overflow: hidden;
+}
+.story-meter__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--story-accent, #6ee7b7);
+  box-shadow: 0 0 10px color-mix(in srgb, var(--story-accent, #6ee7b7) 70%, transparent);
+  transition: width 0.45s ease, background 0.6s ease;
+}
+
+/* Rail de etapas (scrubber vertical dentro del panel). */
+.story-rail {
+  position: absolute;
+  top: 50%;
+  right: 14px;
+  transform: translateY(-50%);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.story-rail__dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid color-mix(in srgb, var(--story-fg, #fff) 55%, transparent);
+  background: transparent;
+  cursor: pointer;
+  transition: transform 0.25s ease, background 0.25s ease;
+}
+.story-rail__dot:hover {
+  background: color-mix(in srgb, var(--story-fg, #fff) 40%, transparent);
+}
+.story-rail__dot.is-active {
+  background: var(--story-accent, #6ee7b7);
+  border-color: var(--story-accent, #6ee7b7);
+  transform: scale(1.5);
+  box-shadow: 0 0 10px var(--story-accent, #6ee7b7);
+}
+.story-rail__dot:focus-visible {
+  outline: 2px solid var(--story-accent, #6ee7b7);
+  outline-offset: 2px;
+}
+
+/* Foco visible del contenedor navegable por teclado */
+.story-root:focus-visible {
+  outline: 3px solid var(--story-accent, #6ee7b7);
+  outline-offset: -3px;
+}
+
+/* ---- View Transition (lista -> historia). Morph del bloque de color. ---- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 0.35s;
+}
+
+/* ---- prefers-reduced-motion: TODO visible, cambios instantáneos ---- */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    scroll-behavior: auto !important;
+  }
+  .story-progress--sda .story-progress__bar {
+    animation: none !important;
+  }
+  .story-stage--sda {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
