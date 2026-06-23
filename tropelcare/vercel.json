@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "rewrites": [
+    {
+      "source": "/api/(.*)",
+      "destination": "https://hackaton-20261-front-587720740455.us-east1.run.app/api/$1"
+    },
+    { "source": "/(.*)", "destination": "/index.html" }
+  ]
 }
