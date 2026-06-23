@@ -19,8 +19,8 @@ Construida para la hackathon **Pizza Protocol**. Consume una API cerrada provist
 
 ## Deploy
 
-- **App:** https://_________________________   ← (abre directo en cualquier ruta)
-- **Repo:** https://github.com/______________
+- **App:** https://hackaton02-lemon.vercel.app/login
+- **Repo:** (https://github.com/sgcasas/Hackaton02)
 
 ---
 
